@@ -1,0 +1,4 @@
+#!/bin/bash
+npx autocannon -c 3 -d 5 \
+-H "X-Telegram-InitData: user=%7B%22id%22%3A822272964%2C%22first_name%22%3A%22Ivan%22%2C%22last_name%22%3A%22Irbov%22%2C%22username%22%3A%22justagent5%22%2C%22language_code%22%3A%22ru%22%2C%22is_premium%22%3Atrue%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FVXI6kacweJMeJtWLn4DTTFsuilBHkvJ0n8wMxaPhGy8.svg%22%7D&chat_instance=4066808418760836051&chat_type=sender&auth_date=1735002095&signature=6-AgHuWlSThLdkSCNGhyj4go3he9kWZ9t9UHJzcf-xBaMgeeUBdnTk0ObTSYuXjQPiXaxROrbt573bWTBRJkCA&hash=dde68545b058eff0d38eb2e0174b21b3df9a34ac0d0bda75074349a11ac0b5a7" \
+https://ams.tonprison.xyz/api/v2/users/info

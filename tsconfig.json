@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2016"],
+    "target": "ES2022",
+    "module": "Node16",
+
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "Node16",
+
+    "outDir": "./dist",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
