@@ -12,9 +12,6 @@ import compression from "compression";
 import { startBot } from "./bot/index.js";
 import { TransactionManager } from "./database/utils/TransactionManager.js";
 import morgan from "morgan";
-// import { startUpdateGlobalDayWorker } from "./workers/updateState.js";
-import { initTelegramClient } from "./service/tg-api/gifts.js";
-
 async function main() {
   logger.info("Backend service started");
   const shutdown = async () => {
@@ -24,13 +21,10 @@ async function main() {
   };
   try {
     await PostgresDataSource.initialize();
-    // await initTelegramClient();
 
     if (process.env.RUN_BOT === "true") {
       startBot();
     }
-
-    // startUpdateGlobalDayWorker(); //todo
 
     new TransactionManager(PostgresDataSource);
 

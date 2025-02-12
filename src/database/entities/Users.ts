@@ -11,9 +11,6 @@ export class Users {
   @Column({ type: "varchar", default: "", nullable: true, length: 1000 })
   name: string;
 
-  @Column({ type: "varchar", default: null, nullable: true, length: 1000, select: false })
-  access_hash: string;
-
   @Column({ type: "varchar", default: "", nullable: true })
   avatar: string;
 
@@ -33,8 +30,4 @@ export class Users {
   /** Ref */
   @Column({ type: "varchar", default: "", unique: true, nullable: false, length: 30 })
   ref_code: string;
-
-  /** Antibot */
-  @Column({ type: "float", default: 0, select: false })
-  antisybil_score: number;
 }

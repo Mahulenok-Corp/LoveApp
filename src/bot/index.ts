@@ -30,12 +30,6 @@ export const startBot = () => {
                 url: "https://t.me/notgift_channel",
               },
             ],
-            // [
-            //   {
-            //     text: messages.buttons.howToEarn,
-            //     url: "",
-            //   },
-            // ],
           ],
         },
       });
