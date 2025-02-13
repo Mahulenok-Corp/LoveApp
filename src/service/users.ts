@@ -1,8 +1,6 @@
 import { Users } from "../database/entities/Users.js";
-import { referralsRepository } from "../database/repositories/index.js";
 import ApiError from "../shared/errors/api-error.js";
 import { logger } from "../shared/logger/logger.js";
-import { Referrals } from "../database/entities/Referrals.js";
 import { TransactionManager } from "../database/utils/TransactionManager.js";
 import { PostgresDataSource } from "../database/db.js";
 import { Pairs } from "../database/entities/Pairs.js";
@@ -19,23 +17,22 @@ export const usersService = {
     }
 
     const inviterPair = await manager.findOne(Pairs, {
-      where: [
-        { is_divorced: false },
-      ],
+      where: [{ is_divorced: false }],
     });
 
     if (!inviterPair) {
       return {
-        user
-      }
+        user,
+      };
     }
 
-
     let partnerInfo = await manager.findOne(Users, {
-      where: [{
-        id: inviterPair.partner_referree == id ? inviterPair.partner_referral : inviterPair.partner_referree
-      }]
-    })
+      where: [
+        {
+          id: inviterPair.partner_referree == id ? inviterPair.partner_referral : inviterPair.partner_referree,
+        },
+      ],
+    });
 
     return {
       user,
@@ -48,8 +45,8 @@ export const usersService = {
           name: partnerInfo.name,
           username: partnerInfo.username,
           avatar: partnerInfo.avatar,
-        }
-      }
+        },
+      },
     };
   },
 
@@ -68,7 +65,7 @@ export const usersService = {
 
         return {
           success: true,
-          new_ref_code: user.ref_code
+          new_ref_code: user.ref_code,
         };
       } catch (err) {
         logger.error({ message: "Error updating ref_code", err });
@@ -102,9 +99,7 @@ export const usersService = {
           if (referree) {
             // Check if inviter is already in relationship
             const inviterPair = await manager.findOne(Pairs, {
-              where: [
-                { is_divorced: false },
-              ],
+              where: [{ is_divorced: false }],
             });
 
             if (inviterPair) {
@@ -117,7 +112,6 @@ export const usersService = {
               partner_referral: user_id,
               is_divorced: false,
             });
-
 
             await manager.save(pair);
           }
