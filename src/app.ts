@@ -12,6 +12,9 @@ import compression from "compression";
 import { startBot } from "./bot/index.js";
 import { TransactionManager } from "./database/utils/TransactionManager.js";
 import morgan from "morgan";
+import { initDefaultStorage } from "./database/init.js";
+import { startPaymentService } from "./payment-service/index.js";
+
 async function main() {
   logger.info("Backend service started");
   const shutdown = async () => {
@@ -21,6 +24,8 @@ async function main() {
   };
   try {
     await PostgresDataSource.initialize();
+    await initDefaultStorage();
+    await startPaymentService();
 
     if (process.env.RUN_BOT === "true") {
       startBot();
