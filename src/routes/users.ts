@@ -12,6 +12,6 @@ const router = Router();
 router.get(`/`, usersController.get);
 router.post(`/`, usersController.create);
 router.post(`/refcode`, usersController.update_refcode);
-// router.post("/divorce", pairsController.divorce);
+router.post("/divorce", pairsController.divorce);
 
 export default router;
