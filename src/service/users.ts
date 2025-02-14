@@ -94,8 +94,13 @@ export const usersService = {
 
         await manager.save(newUser);
 
+        console.log(123);
+        console.log(123);
+        console.log(123);
+        console.log(ref_code);
         if (ref_code) {
           const referree = await manager.findOne(Users, { where: { ref_code } });
+          console.log(referree);
           if (referree) {
             // Check if inviter is already in relationship
             const inviterPair = await manager.findOne(Pairs, {

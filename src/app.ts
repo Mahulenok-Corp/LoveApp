@@ -14,6 +14,7 @@ import { TransactionManager } from "./database/utils/TransactionManager.js";
 import morgan from "morgan";
 import { initDefaultStorage } from "./database/init.js";
 import { startPaymentService } from "./payment-service/index.js";
+import { txListener } from "./workers/tx-listener/index.js";
 
 async function main() {
   logger.info("Backend service started");
@@ -30,7 +31,7 @@ async function main() {
     if (process.env.RUN_BOT === "true") {
       startBot();
     }
-
+    txListener.start();
     new TransactionManager(PostgresDataSource);
 
     const app = express();

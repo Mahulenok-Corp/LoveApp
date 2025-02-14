@@ -1,4 +1,5 @@
 import { Address } from "@ton/core";
+import { randomUUID } from "node:crypto";
 import { EntityManager } from "typeorm";
 import { Transactions } from "../database/entities/Payment/Transactions.js";
 import { Users } from "../database/entities/Users.js";
@@ -7,6 +8,8 @@ import { TransactionManager } from "../database/utils/TransactionManager.js";
 import ApiError from "../shared/errors/api-error.js";
 import { logger } from "../shared/logger/logger.js";
 import { TxListenerResponse } from "../workers/tx-listener/index.js";
+import "dotenv/config";
+import { Pairs } from "../database/entities/Pairs.js";
 
 export const txService = {
   getTx: async (user_id: string, uuid: string) => {
@@ -27,37 +30,25 @@ export const txService = {
     await txService._buy(tx, data);
   },
 
-  buyTeaTon: async (user_id: string, amount: number) => {
+  buy: async (user_id: string) => {
     return TransactionManager.executeTransaction(async (manager) => {
-      // const user = await manager.findOne(Users, { where: { id: user_id } });
-      // if (!user) {
-      //   throw new ApiError(404, "User not found");
-      // }
-      // const prices = await manager.findOne(Currency, {
-      //   where: {
-      //     teaCount: amount,
-      //   },
-      // });
-      // if (!prices) {
-      //   throw new ApiError(400, "Invalid tea amount");
-      // }
-      // const payload = randomUUID();
-      // const currencyAmount = prices.ton.toFixed(2);
-      // const tx = new Transactions();
-      // tx.user_id = user_id;
-      // tx.currency = "ton";
-      // tx.currency_amount = currencyAmount;
-      // //todo
-      // tx.product = "tea";
-      // tx.product_amount = amount;
-      // tx.isMarket = true;
-      // tx.payload = payload;
-      // tx.ton_destination = config.TON_DESTINATION;
-      // tx.status = "created";
-      // await manager.save(tx);
-      // return { ok: true, uuid: payload, amount: currencyAmount };
+      const user = await manager.findOne(Users, { where: { id: user_id } });
+      if (!user) {
+        throw new ApiError(404, "User not found");
+      }
+      const payload = randomUUID();
+      const price = 100_000;
+      const currencyAmount = price.toFixed(2);
+      const tx = new Transactions();
+      tx.user_id = user_id;
+      tx.currency_amount = currencyAmount;
+      tx.payload = payload;
+      tx.ton_destination = process.env.ACCOUNT_HEX;
+      tx.status = "created";
+      await manager.save(tx);
+      return payload;
     }).catch((error) => {
-      logger.error({ message: "Error buyTeaTon", err: error });
+      logger.error({ message: "Error buy", err: error });
       throw error;
     });
   },
@@ -74,16 +65,6 @@ export const txService = {
           }
 
           tx.blockchain_event = data.event_id;
-
-          const parsedSender = Address.parse(data?.sender).toString();
-          if (user.wallet) {
-            const parsedWallet = Address.parse(user?.wallet).toString();
-            if (parsedSender !== parsedWallet) {
-              tx.data = { suspicious: true, different_addresses: { wallet: parsedWallet, sender: parsedSender } };
-            }
-          } else {
-            tx.data = { suspicious: true, different_addresses: { wallet: "empty", sender: parsedSender } };
-          }
 
           if (data.status !== "commited") {
             throw new ApiError(500, `Invalid status: ${data.status}`);
@@ -124,30 +105,47 @@ export const txService = {
   },
 
   fulfill: async (tx: Transactions, manager: EntityManager) => {
-    let user = await manager.findOne(Users, { where: { id: tx.user_id } });
+    console.log("BUY");
+    const userId = tx.user_id;
+    const pair = await manager.findOne(Pairs, {
+      where: [
+        { partner_referree: userId, is_divorced: false },
+        { partner_referral: userId, is_divorced: false },
+      ],
+    });
 
-    if (!user) {
-      throw new ApiError(404, "User not found");
+    if (!pair) {
+      throw new ApiError(404, "No active relationship found");
     }
 
-    // if (tx.product === "special_offer") {
-    //   const uso = await manager.findOne(UsersSpecialOffers, { where: { id: tx.product_id } });
-    //   if (!uso) {
-    //     throw new ApiError(404, "UsersSpecialOffers not found");
-    //   }
+    // Get user info before divorce
+    const currentUser = await manager.findOne(Users, { where: { id: userId } });
+    const partnerId = pair.partner_referree === userId ? pair.partner_referral : pair.partner_referree;
+    const partner = await manager.findOne(Users, { where: { id: partnerId } });
 
-    //   uso.bought_amount += tx.product_amount;
+    // Update pair status
+    pair.is_divorced = true;
+    pair.divorce_date = new Date();
+    await manager.save(pair);
 
-    //   await giveService.giveItemNoCommit(user, uso.source.product_id, manager, tx.product_amount);
-    //   await manager.save([user, uso]);
-    //   return;
-    // }
-
-    // if (tx.product === "nft_1") {
-    //   user.nft_data.fresh_fish_1_burn = true;
-    //   await giveService.giveItemNoCommit(user, "4c2215a9-2990-4785-83d9-d9d9cb09a001", manager);
-    //   await manager.save(user);
-    //   return;
-    // }
+    return {
+      success: true,
+      message: "Successfully divorced",
+      divorceDate: pair.divorce_date,
+      divorcedPair: {
+        myInfo: {
+          id: currentUser.id,
+          name: currentUser.name,
+          username: currentUser.username,
+          avatar: currentUser.avatar,
+        },
+        partnerInfo: {
+          id: partner.id,
+          name: partner.name,
+          username: partner.username,
+          avatar: partner.avatar,
+        },
+      },
+    };
   },
 };

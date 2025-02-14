@@ -26,15 +26,15 @@ export function validateEvent(accountHex: string, event: Event): { success: bool
     return { success: false, status: "err_no_recipient" };
   }
 
-  if (event.actions.length !== 1) {
-    if (
-      event.actions[1]?.type !== "ContractDeploy" ||
-      event.actions[1]?.ContractDeploy?.address !== event.actions[0][type]?.sender?.address
-    ) {
-      logger.error(`Tx ${event.event_id} has many actions`);
-      return { success: false, status: "err_invalid_actions_len" };
-    }
-  }
+  // if (event.actions.length !== 1) {
+  //   if (
+  //     event.actions[1]?.type !== "ContractDeploy" ||
+  //     event.actions[1]?.ContractDeploy?.address !== event.actions[0][type]?.sender?.address
+  //   ) {
+  //     logger.error(`Tx ${event.event_id} has many actions`);
+  //     return { success: false, status: "err_invalid_actions_len" };
+  //   }
+  // }
 
   if (event.actions[0]?.type !== "JettonTransfer") {
     logger.error(`Tx ${event.event_id} has invalid type`);

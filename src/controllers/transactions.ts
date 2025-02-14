@@ -19,4 +19,15 @@ export const txController = {
       next(error);
     }
   },
+
+  buy: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user_id = req["user"].id;
+
+      const response = await txService.buy(user_id);
+      return res.status(200).json(response);
+    } catch (error: unknown) {
+      next(error);
+    }
+  },
 };

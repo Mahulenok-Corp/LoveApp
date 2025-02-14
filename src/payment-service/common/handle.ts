@@ -28,7 +28,7 @@ export async function handleEvent(accountHex: string, event: Event, tx: Transact
       if (type === "JettonTransfer") {
         if (payload.length === 66 && payload.substring(1, 2) === ":") {
         } else if (payload.length !== 36) {
-          status = "err_invalid_payload_len";
+          // status = "err_invalid_payload_len";
         }
       }
 

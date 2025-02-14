@@ -23,18 +23,18 @@ const usersController = {
       const username = user.username ?? "";
       const languageCode = user.languageCode;
 
-      let { avatar, referral_code: referralCode } = req.body;
+      let { avatar, ref_code } = req.body;
 
       if (!avatar) avatar = "";
 
-      if (!referralCode) referralCode = "";
+      if (!ref_code) ref_code = "";
       const result = await usersService.create({
         user_id,
         name,
         username,
         languageCode,
         avatar,
-        ref_code: referralCode,
+        ref_code,
       });
 
       res.status(200).json(result);

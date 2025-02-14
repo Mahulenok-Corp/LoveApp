@@ -32,7 +32,7 @@ async function processTransactions() {
   try {
     const now = new Date();
     const transactions = await txRepository.find({
-      where: { status: "created", currency: "ton" },
+      where: { status: "created" },
     });
     for (const tx of transactions) {
       const creationDate = new Date(tx.creationDate);
@@ -58,6 +58,7 @@ async function sendTransaction(tx: Transactions) {
     const event = await eventsRepository.findOne({ where: { payload: tx.payload } });
 
     if (event) {
+      console.log("FOUND EVENT");
       //@ts-ignore
       txService.tonValidateTx(tx, event);
     }
