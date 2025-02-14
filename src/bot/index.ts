@@ -12,28 +12,28 @@ import { sendMassMessage, SendMassMessageParams } from "./massSender.js";
 export const bot = new Bot(process.env.BOT_API_KEY);
 export const startBot = () => {
   try {
-    bot.command("start", (ctx) => {
-      return ctx.replyWithPhoto("https://media.not-gift.xyz/start.jpg", {
-        caption: messages.welcome,
-        parse_mode: "HTML",
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: messages.buttons.play,
-                url: "https://t.me/glftnot_bot/notgift",
-              },
-            ],
-            [
-              {
-                text: messages.buttons.subscribe,
-                url: "https://t.me/notgift_channel",
-              },
-            ],
-          ],
-        },
-      });
-    });
+    // bot.command("start", (ctx) => {
+    //   return ctx.replyWithPhoto("https://media.not-gift.xyz/start.jpg", {
+    //     caption: messages.welcome,
+    //     parse_mode: "HTML",
+    //     reply_markup: {
+    //       inline_keyboard: [
+    //         [
+    //           {
+    //             text: messages.buttons.play,
+    //             url: "https://t.me/glftnot_bot/notgift",
+    //           },
+    //         ],
+    //         [
+    //           {
+    //             text: messages.buttons.subscribe,
+    //             url: "https://t.me/notgift_channel",
+    //           },
+    //         ],
+    //       ],
+    //     },
+    //   });
+    // });
 
     bot.start();
     logger.info("Bot instance started");
